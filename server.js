@@ -11,35 +11,39 @@ const client = new OpenAI({
 });
 
 app.get("/", (req, res) => {
-  res.send("H5 çalışıyor 🚀");
+  res.send("OK");
 });
 
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
 
+    if (!message) {
+      return res.status(400).json({ error: "No message" });
+    }
+
     const response = await client.chat.completions.create({
       model: "gpt-4.1-mini",
       messages: [
         {
           role: "system",
-          content: "Sen H5'sin. Kısa ve net cevap ver.",
+          content: "You are H5. Answer short and clear."
         },
         {
           role: "user",
-          content: message,
-        },
-      ],
+          content: message
+        }
+      ]
     });
 
     res.json({
-      reply: response.choices[0].message.content,
+      reply: response.choices[0].message.content
     });
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({
-      error: "Hata oluştu",
+      error: "Server error"
     });
   }
 });
@@ -47,5 +51,5 @@ app.post("/chat", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server çalışıyor:", PORT);
+  console.log("Server running on port:", PORT);
 });
